@@ -1,0 +1,13 @@
+name: 'Local Cache'
+description: 'Faster caching action that uses our local cache on Inova'
+inputs:
+  folder:
+    description: 'Folder to cache'
+    required: true
+  key:
+    description: 'Cache key'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js' 
+  post: 'dist-post/index.js' 
