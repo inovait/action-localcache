@@ -80,7 +80,6 @@ web_modules/
 .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
-.cache
 .parcel-cache
 
 # Next.js build output
@@ -127,7 +126,11 @@ out
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
- 
+
+build
+
 .idea/modules.xml
+.idea/workspace.xml
 .idea/vcs.xml
+.idea/misc.xml
 *.iml

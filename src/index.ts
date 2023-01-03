@@ -41,7 +41,7 @@ async function main() {
             await exec.exec(`ls -la /root`);
         }
 
-    } catch (error) {
+    } catch (error: any) {
         core.setFailed(error.message);
     }
 }

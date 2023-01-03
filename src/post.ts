@@ -33,7 +33,7 @@ async function main() {
         }
 
         console.log(`Post cache ${key} into ${folder}!`);
-    } catch (error) {
+    } catch (error: any) {
         core.setFailed(error.message);
     }
 }

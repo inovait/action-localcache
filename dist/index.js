@@ -1,5 +1,63 @@
-/******/ (() => { // webpackBootstrap
+require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
+
+/***/ 1165:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __nccwpck_require__(6398);
+const progressive_downloader_1 = __nccwpck_require__(9438);
+const path = __nccwpck_require__(1017);
+const exec = __nccwpck_require__(6626);
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const key = core.getInput('key');
+            const folder = core.getInput('folder');
+            console.log(`Loading cache ${key} into ${folder}!`);
+            var cacheHit = false;
+            try {
+                yield (0, progressive_downloader_1.download)([
+                    {
+                        url: `http://build-docker-linux:25478/files/${key}.tar?token=tqLbfObO8fHMRYeDZqTT`,
+                        path: "cache.tar",
+                    }
+                ], (progress, speed // called once per second while downloading
+                ) => console.log(`cache download ${progress * 100}% complete at ${speed} MB/s`), (_current, _total // called every time a file download completes
+                ) => { });
+                cacheHit = true;
+            }
+            catch (notFoundError) {
+                console.log(`Cache entry for key ${key} missing`);
+            }
+            if (cacheHit) {
+                yield exec.exec(`ls -la /root`);
+                const parentFolder = path.resolve(folder, '..');
+                yield exec.exec(`mkdir -p ${parentFolder}`);
+                yield exec.exec(`tar -xf cache.tar -C ${parentFolder}`);
+                yield exec.exec(`ls -la /root`);
+            }
+        }
+        catch (error) {
+            core.setFailed(error.message);
+        }
+    });
+}
+main();
+
+
+/***/ }),
 
 /***/ 7268:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
@@ -6711,7 +6769,6 @@ module.exports = require("zlib");
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
-var __webpack_unused_export__;
 
 /*
  * Copyright (C) 2020-2022 UBports Foundation <info@ubports.com>
@@ -6730,8 +6787,8 @@ var __webpack_unused_export__;
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-__webpack_unused_export__ = ({ value: true });
-exports.LR = __webpack_unused_export__ = __webpack_unused_export__ = __webpack_unused_export__ = __webpack_unused_export__ = void 0;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.download = exports.downloadOne = exports.checkFile = exports.calculateFileChecksum = exports.normalizeProgress = void 0;
 const tslib_1 = __nccwpck_require__(1038);
 const assert_1 = __nccwpck_require__(9491);
 const axios_1 = tslib_1.__importDefault(__nccwpck_require__(5209));
@@ -6741,7 +6798,7 @@ const path_1 = __nccwpck_require__(1017);
 function normalizeProgress(current, total) {
     return Math.min(Math.round((current / Math.max(total, 1)) * 100000) / 100000, 1);
 }
-__webpack_unused_export__ = normalizeProgress;
+exports.normalizeProgress = normalizeProgress;
 /** resolve hex digest string for the checksum of a file */
 function calculateFileChecksum(path, checksum) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6750,7 +6807,7 @@ function calculateFileChecksum(path, checksum) {
         return hash.digest("hex");
     });
 }
-__webpack_unused_export__ = calculateFileChecksum;
+exports.calculateFileChecksum = calculateFileChecksum;
 /** Validate a file based on the checksum. Resolves if the file exists and matches the provided hash, rejects otherwise. */
 function checkFile({ path, checksum }, strict = true) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6759,7 +6816,7 @@ function checkFile({ path, checksum }, strict = true) {
         return calculateFileChecksum(path, checksum !== null && checksum !== void 0 ? checksum : { algorithm: "md5" }).then(sum => checksum && (0, assert_1.equal)(checksum.sum, sum, "checksum mismatch"));
     });
 }
-__webpack_unused_export__ = checkFile;
+exports.checkFile = checkFile;
 /** Download a file */
 function downloadOne(url, downloadPath, chunkDownloaded, totalSize) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6783,7 +6840,7 @@ function downloadOne(url, downloadPath, chunkDownloaded, totalSize) {
         }
     });
 }
-__webpack_unused_export__ = downloadOne;
+exports.downloadOne = downloadOne;
 /** download and check files */
 function download(files, progress, next) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -6806,8 +6863,8 @@ function download(files, progress, next) {
             .finally(() => clearInterval(progressInterval));
     });
 }
-exports.LR = download;
-__webpack_unused_export__ = download;
+exports.download = download;
+exports["default"] = download;
 
 
 /***/ }),
@@ -10737,79 +10794,18 @@ module.exports = JSON.parse('{"application/1d-interleaved-parityfec":{"source":"
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-__nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var progressive_downloader__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(9438);
-const core = __nccwpck_require__(6398);
-
-const path = __nccwpck_require__(1017);
-const exec = __nccwpck_require__(6626);
-
-async function main() {
-    try {
-        const key = core.getInput('key');
-        const folder = core.getInput('folder');
-        console.log(`Loading cache ${key} into ${folder}!`);
-
-        var cacheHit = false;
-        try {
-            await (0,progressive_downloader__WEBPACK_IMPORTED_MODULE_0__/* .download */ .LR)(
-                [
-                    {
-                        url: `http://build-docker-linux:25478/files/${key}.tar?token=tqLbfObO8fHMRYeDZqTT`,
-                        path: "cache.tar",
-                    }
-                ],
-                (
-                    progress,
-                    speed // called once per second while downloading
-                ) => console.log(`cache download ${progress * 100}% complete at ${speed} MB/s`),
-                (
-                    _current,
-                    _total // called every time a file download completes
-                ) => { }
-            );
-            cacheHit = true;
-        } catch (notFoundError) {
-            console.log(`Cache entry for key ${key} missing`)
-        }
-
-        if (cacheHit) {
-            await exec.exec(`ls -la /root`);
-            const parentFolder = path.resolve(folder, '..');
-
-            await exec.exec(`mkdir -p ${parentFolder}`);
-            await exec.exec(`tar -xf cache.tar -C ${parentFolder}`);    
-            await exec.exec(`ls -la /root`);
-        }
-
-    } catch (error) {
-        core.setFailed(error.message);
-    }
-}
-
-main();
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(1165);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
+//# sourceMappingURL=index.js.map
