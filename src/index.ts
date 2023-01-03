@@ -36,12 +36,10 @@ async function main (): Promise<void> {
     }
 
     if (cacheHit) {
-      await exec.exec('ls -la /root')
       const parentFolder = path.resolve(folder, '..')
 
       await exec.exec(`mkdir -p ${parentFolder}`)
       await exec.exec(`tar -xf cache.tar -C ${parentFolder}`)
-      await exec.exec('ls -la /root')
     }
   } catch (error: any) {
     core.setFailed(error.message)

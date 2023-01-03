@@ -70,11 +70,9 @@ function main() {
                 console.log(`Cache entry for key ${key} missing`);
             }
             if (cacheHit) {
-                yield exec.exec('ls -la /root');
                 const parentFolder = path_1.default.resolve(folder, '..');
                 yield exec.exec(`mkdir -p ${parentFolder}`);
                 yield exec.exec(`tar -xf cache.tar -C ${parentFolder}`);
-                yield exec.exec('ls -la /root');
             }
         }
         catch (error) {
