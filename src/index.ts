@@ -2,11 +2,14 @@ import { download } from 'progressive-downloader'
 import * as exec from '@actions/exec'
 import path from 'path'
 import * as core from '@actions/core'
+import expandTilde = require('expand-tilde')
 
 async function main (): Promise<void> {
   try {
     const key = core.getInput('key')
-    const folder = core.getInput('folder')
+    const rawFolder = core.getInput('folder')
+    const folder = expandTilde(rawFolder)
+
     console.log(`Loading cache ${key} into ${folder}!`)
 
     let cacheHit = false

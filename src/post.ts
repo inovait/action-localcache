@@ -5,11 +5,13 @@ import fs from 'fs'
 import FormData from 'form-data'
 import * as exec from '@actions/exec'
 import * as core from '@actions/core'
+import expandTilde = require('expand-tilde')
 
 async function main (): Promise<void> {
   try {
     const key = core.getInput('key')
-    const folder = core.getInput('folder')
+    const rawFolder = core.getInput('folder')
+    const folder = expandTilde(rawFolder)
 
     console.log('Compressing cache...')
     const parentFolder = path.resolve(folder, '..')
