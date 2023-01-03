@@ -1,7 +1,7 @@
 import { download } from 'progressive-downloader'
-import exec from '@actions/exec'
+import * as exec from '@actions/exec'
 import path from 'path'
-import core from '@actions/core'
+import * as core from '@actions/core'
 
 async function main (): Promise<void> {
   try {

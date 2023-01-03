@@ -6,6 +6,29 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23,17 +46,17 @@ const node_fetch_1 = __importDefault(__nccwpck_require__(4429));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const form_data_1 = __importDefault(__nccwpck_require__(4334));
-const exec_1 = __importDefault(__nccwpck_require__(1514));
-const core_1 = __importDefault(__nccwpck_require__(2186));
+const exec = __importStar(__nccwpck_require__(1514));
+const core = __importStar(__nccwpck_require__(2186));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const key = core_1.default.getInput('key');
-            const folder = core_1.default.getInput('folder');
+            const key = core.getInput('key');
+            const folder = core.getInput('folder');
             console.log('Compressing cache...');
             const parentFolder = path_1.default.resolve(folder, '..');
             const folderName = path_1.default.basename(folder);
-            yield exec_1.default.exec(`tar -cf cache.tar -C ${parentFolder} ${folderName}`);
+            yield exec.exec(`tar -cf cache.tar -C ${parentFolder} ${folderName}`);
             console.log('Uploading cache...');
             const formData = new form_data_1.default();
             formData.append('file', fs_1.default.createReadStream('cache.tar'));
@@ -46,13 +69,13 @@ function main() {
             });
             const res = yield r.text();
             if (!res.includes('"ok":true')) {
-                core_1.default.setFailed(res);
+                core.setFailed(res);
                 return;
             }
             console.log(`Post cache ${key} into ${folder}!`);
         }
         catch (error) {
-            core_1.default.setFailed(error.message);
+            core.setFailed(error.message);
         }
     });
 }

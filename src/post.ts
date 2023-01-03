@@ -3,8 +3,8 @@ import fetch from 'node-fetch'
 import path from 'path'
 import fs from 'fs'
 import FormData from 'form-data'
-import exec from '@actions/exec'
-import core from '@actions/core'
+import * as exec from '@actions/exec'
+import * as core from '@actions/core'
 
 async function main (): Promise<void> {
   try {

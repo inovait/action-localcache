@@ -6,6 +6,29 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20,14 +43,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const progressive_downloader_1 = __nccwpck_require__(1662);
-const exec_1 = __importDefault(__nccwpck_require__(1514));
+const exec = __importStar(__nccwpck_require__(1514));
 const path_1 = __importDefault(__nccwpck_require__(1017));
-const core_1 = __importDefault(__nccwpck_require__(2186));
+const core = __importStar(__nccwpck_require__(2186));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const key = core_1.default.getInput('key');
-            const folder = core_1.default.getInput('folder');
+            const key = core.getInput('key');
+            const folder = core.getInput('folder');
             console.log(`Loading cache ${key} into ${folder}!`);
             let cacheHit = false;
             try {
@@ -45,15 +68,15 @@ function main() {
                 console.log(`Cache entry for key ${key} missing`);
             }
             if (cacheHit) {
-                yield exec_1.default.exec('ls -la /root');
+                yield exec.exec('ls -la /root');
                 const parentFolder = path_1.default.resolve(folder, '..');
-                yield exec_1.default.exec(`mkdir -p ${parentFolder}`);
-                yield exec_1.default.exec(`tar -xf cache.tar -C ${parentFolder}`);
-                yield exec_1.default.exec('ls -la /root');
+                yield exec.exec(`mkdir -p ${parentFolder}`);
+                yield exec.exec(`tar -xf cache.tar -C ${parentFolder}`);
+                yield exec.exec('ls -la /root');
             }
         }
         catch (error) {
-            core_1.default.setFailed(error.message);
+            core.setFailed(error.message);
         }
     });
 }
