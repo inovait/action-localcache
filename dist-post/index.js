@@ -52,8 +52,12 @@ const expandTilde = __nccwpck_require__(8248);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const key = core.getInput('key');
-            const rawFolder = core.getInput('folder');
+            if (!core.getBooleanInput('save')) {
+                core.debug('Save disabled. Skipping this step...');
+                return;
+            }
+            const key = core.getInput('key', { required: true });
+            const rawFolder = core.getInput('folder', { required: true });
             const folder = expandTilde(rawFolder);
             console.log('Compressing cache...');
             const parentFolder = path_1.default.resolve(folder, '..');

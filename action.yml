@@ -7,6 +7,12 @@ inputs:
   key:
     description: 'Cache key'
     required: true
+  save:
+    description: 'true/false whether to save cache after workflow is done'
+    default: "true"
+  restore:
+    description: 'true/false whether to restore cache before continuing with the workflow'
+    default: "true"
 runs:
   using: 'node16'
   main: 'dist/index.js' 

@@ -6,8 +6,13 @@ import expandTilde = require('expand-tilde')
 
 async function main (): Promise<void> {
   try {
-    const key = core.getInput('key')
-    const rawFolder = core.getInput('folder')
+    if (!core.getBooleanInput('restore')) {
+      console.log('Restore disabled. Skipping this step...')
+      return
+    }
+
+    const key = core.getInput('key', { required: true })
+    const rawFolder = core.getInput('folder', { required: true })
     const folder = expandTilde(rawFolder)
 
     console.log(`Loading cache ${key} into ${folder}!`)

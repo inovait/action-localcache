@@ -50,8 +50,12 @@ const expandTilde = __nccwpck_require__(8248);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const key = core.getInput('key');
-            const rawFolder = core.getInput('folder');
+            if (!core.getBooleanInput('restore')) {
+                console.log('Restore disabled. Skipping this step...');
+                return;
+            }
+            const key = core.getInput('key', { required: true });
+            const rawFolder = core.getInput('folder', { required: true });
             const folder = expandTilde(rawFolder);
             console.log(`Loading cache ${key} into ${folder}!`);
             let cacheHit = false;
