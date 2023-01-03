@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
-    "package": "ncc build --source-map && ncc build --source-map build/post.js -o dist-post"
+    "package": "ncc build --source-map && ncc build --source-map build/post.js -o dist-post",
+    "all": "npm run build && npm run package"
   },
   "repository": {
     "type": "git",
