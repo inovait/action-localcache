@@ -128,3 +128,6 @@ out
 .yarn/install-state.gz
 .pnp.*
  
+.idea/modules.xml
+.idea/vcs.xml
+*.iml
