@@ -13,14 +13,14 @@ inputs:
   restore:
     description: 'true/false whether to restore cache before continuing with the workflow'
     default: "true"
-  repo:
-    description: 'repo name'
-    required: true
-  token:
-    description: 'github token'
-    required: true
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
-  post: 'dist-post/index.js'
-  post-if: success()
+  using: "composite"
+  steps:
+    - uses: inovait/action-localcache/internal@main
+      with:
+        folder: '${{ inputs.folder }}'
+        key: '${{ inputs.key }}'
+        save: '${{ inputs.save }}'
+        restore: '${{ inputs.restore }}'
+        repo: '${{ github.repository }}'
+        token: '${{ github.token }}'

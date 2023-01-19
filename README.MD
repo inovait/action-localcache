@@ -19,6 +19,8 @@ where:
 If cache entry with provided key exists, it will be downloaded and saved into a folder before build continues. 
 After build finishes, cached folder will be uploaded back onto the cache server.
 
+Cache entries are scoped to the repositories (every Github repository has its own cache, even if the keys overlap).
+
 # Building
 
 `npm run all`

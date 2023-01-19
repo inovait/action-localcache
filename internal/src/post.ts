@@ -2,7 +2,6 @@ import fetch from 'node-fetch'
 
 import path from 'path'
 import fs from 'fs'
-import FormData from 'form-data'
 import * as exec from '@actions/exec'
 import * as core from '@actions/core'
 import expandTilde = require('expand-tilde')
@@ -18,6 +17,9 @@ async function main (): Promise<void> {
     const rawFolder = core.getInput('folder', { required: true })
     const folder = expandTilde(rawFolder)
 
+    const repo = core.getInput('repo', { required: true })
+    const token = core.getInput('token', { required: true })
+
     console.log('Compressing cache...')
     const parentFolder = path.resolve(folder, '..')
     const folderName = path.basename(folder)
@@ -25,24 +27,27 @@ async function main (): Promise<void> {
 
     console.log('Uploading cache...')
 
-    const formData = new FormData()
-    formData.append('file', fs.createReadStream('cache.tar'))
-    const a = `http://build-docker-linux:25478/files/${key}.tar?token=tqLbfObO8fHMRYeDZqTT`
-    console.log(`Uploading '${a}'`)
-    const r = await fetch(`http://build-docker-linux:25478/files/${key}.tar?token=tqLbfObO8fHMRYeDZqTT`, {
+    const authorization = `Bearer ${token}`
+
+    const res = await fetch(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
       method: 'PUT',
-      body: formData,
-      headers: formData.getHeaders()
+      body: fs.createReadStream('cache.tar'),
+      headers: {
+        Authorization: authorization
+      }
     })
-    const res = await r.text()
-    if (!res.includes('"ok":true')) {
-      core.setFailed(res)
+
+    await res.buffer()
+
+    if (res.status !== 200) {
+      core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
       return
     }
 
     console.log(`Post cache ${key} into ${folder}!`)
   } catch (error: any) {
-    core.setFailed(error.message)
+    console.log(error)
+    core.setFailed(error)
   }
 }
 

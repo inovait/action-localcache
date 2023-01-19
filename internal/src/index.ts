@@ -1,8 +1,9 @@
-import { download } from 'progressive-downloader'
 import * as exec from '@actions/exec'
 import path from 'path'
 import * as core from '@actions/core'
 import expandTilde = require('expand-tilde')
+import fs from 'fs'
+import fetch from 'node-fetch'
 
 async function main (): Promise<void> {
   try {
@@ -15,38 +16,43 @@ async function main (): Promise<void> {
     const rawFolder = core.getInput('folder', { required: true })
     const folder = expandTilde(rawFolder)
 
+    const repo = core.getInput('repo', { required: true })
+    const token = core.getInput('token', { required: true })
+
     console.log(`Loading cache ${key} into ${folder}!`)
 
-    let cacheHit = false
-    try {
-      await download(
-        [
-          {
-            url: `http://build-docker-linux:25478/files/${key}.tar?token=tqLbfObO8fHMRYeDZqTT`,
-            path: 'cache.tar'
-          }
-        ],
-        (
-          progress,
-          speed // called once per second while downloading
-        ) => console.log(`cache download ${progress * 100}% complete at ${speed} MB/s`),
-        (
-          _current,
-          _total // called every time a file download completes
-        ) => { }
-      )
-      cacheHit = true
-    } catch (notFoundError) {
-      console.log(`Cache entry for key ${key} missing`)
-    }
+    const res = await fetch(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
 
-    if (cacheHit) {
+    if (res.status === 404) {
+      console.log(`Cache entry for key ${key} missing. Skipping...`)
+    } else if (res.status === 200) {
+      const body = res.body
+      if (body == null) {
+        core.setFailed('Failed to fetch data')
+        return
+      }
+
+      const fileStream = fs.createWriteStream('cache.tar')
+      await new Promise((resolve, reject) => {
+        body.pipe(fileStream)
+        body.on('error', reject)
+        fileStream.on('finish', resolve)
+      })
+
       const parentFolder = path.resolve(folder, '..')
 
       await exec.exec(`mkdir -p ${parentFolder}`)
       await exec.exec(`tar -xf cache.tar -C ${parentFolder}`)
+    } else {
+      core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
+      return
     }
   } catch (error: any) {
+    console.log(error)
     core.setFailed(error.message)
   }
 }
