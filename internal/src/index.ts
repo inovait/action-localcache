@@ -46,7 +46,12 @@ async function main (): Promise<void> {
       const parentFolder = path.resolve(folder, '..')
 
       await exec.exec(`mkdir -p ${parentFolder}`)
-      await exec.exec(`tar -xf cache.tar -C ${parentFolder}`)
+      try {
+        await exec.exec(`tar -xf cache.tar -C ${parentFolder}`)
+      } catch (e) {
+        console.warn(e)
+        core.warning('Cache unpacking failed. Was the archive corrupted? Continuing without cache...')
+      }
     } else {
       core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
       return
