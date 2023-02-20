@@ -16,7 +16,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: inovait/action-localcache/internal@try-catch-test
+    - uses: inovait/action-localcache/internal@try_catch_test
       with:
         folder: '${{ inputs.folder }}'
         key: '${{ inputs.key }}'
