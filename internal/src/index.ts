@@ -47,7 +47,7 @@ async function main (): Promise<void> {
 
       await exec.exec(`mkdir -p ${parentFolder}`)
       try {
-        await exec.exec(`tar -xf cache.tar -C ${parentFolder}`)
+        await exec.exec(`taar -xf cache.tar -C ${parentFolder}`)
       } catch (e) {
         console.warn(e)
         core.warning('Cache unpacking failed. Was the archive corrupted? Continuing without cache...')
