@@ -23,7 +23,13 @@ async function main (): Promise<void> {
     console.log('Compressing cache...')
     const parentFolder = path.resolve(folder, '..')
     const folderName = path.basename(folder)
-    await exec.exec(`tar -cf cache.tar -C ${parentFolder} ${folderName}`)
+    try {
+      await exec.exec(`tar -cf cache.tar -C ${parentFolder} ${folderName}`)
+    } catch (e) {
+      console.warn(e)
+      core.warning('Cache packing failed. Is the cached folder missing?')
+      return
+    }
 
     console.log('Uploading cache...')
 
