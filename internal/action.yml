@@ -20,7 +20,7 @@ inputs:
     description: 'github token'
     required: true
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
   post: 'dist-post/index.js'
   post-if: success()
