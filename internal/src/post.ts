@@ -1,10 +1,9 @@
 import fetch from 'node-fetch'
 
 import path from 'path'
-import fs from 'fs'
-import * as exec from '@actions/exec'
 import * as core from '@actions/core'
-import expandTilde = require('expand-tilde')
+import { spawn } from 'node:child_process'
+import expandTilde from 'expand-tilde'
 
 async function main (): Promise<void> {
   try {
@@ -20,30 +19,32 @@ async function main (): Promise<void> {
     const repo = core.getInput('repo', { required: true })
     const token = core.getInput('token', { required: true })
 
-    console.log('Compressing cache...')
+    console.log('Compressing and Uploading cache...')
     const parentFolder = path.resolve(folder, '..')
     const folderName = path.basename(folder)
-    try {
-      await exec.exec(`tar -cf cache.tar -C ${parentFolder} ${folderName}`)
-    } catch (e) {
-      console.warn(e)
-      core.warning('Cache packing failed. Is the cached folder missing?')
-      return
-    }
 
-    console.log('Uploading cache...')
+    // We must use regular node.spawn instead of actions exec due to https://github.com/actions/toolkit/issues/649
+    const tarProcess = spawn('tar', ['-cf', '-', '-C', parentFolder, folderName])
 
     const authorization = `Bearer ${token}`
 
-    const res = await fetch(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
+    const resPromise = fetch(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
       method: 'PUT',
-      body: fs.createReadStream('cache.tar'),
+      body: tarProcess.stdout,
       headers: {
         Authorization: authorization
-      }
+      },
+      highWaterMark: 1024 * 1024
     })
 
-    await res.buffer()
+    await new Promise((resolve) => {
+      tarProcess.on('exit', (code) => {
+        resolve(code)
+      })
+    })
+
+    const res = await resPromise
+    await res.arrayBuffer()
 
     if (res.status !== 200) {
       core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)

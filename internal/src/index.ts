@@ -1,9 +1,9 @@
 import * as exec from '@actions/exec'
 import path from 'path'
 import * as core from '@actions/core'
-import expandTilde = require('expand-tilde')
-import fs from 'fs'
 import fetch from 'node-fetch'
+import { spawn } from 'node:child_process'
+import expandTilde = require('expand-tilde')
 
 async function main (): Promise<void> {
   try {
@@ -21,10 +21,18 @@ async function main (): Promise<void> {
 
     console.log(`Loading cache ${key} into ${folder}!`)
 
+    const parentFolder = path.resolve(folder, '..')
+
+    await exec.exec(`mkdir -p ${parentFolder}`)
+
+    // We must use regular node spawn instead of actions.exec due to https://github.com/actions/toolkit/issues/649
+    const tarProcess = spawn('tar', ['-xf', '-', '-C', parentFolder])
+
     const res = await fetch(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
       headers: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      highWaterMark: 1024 * 1024
     })
 
     if (res.status === 404) {
@@ -36,22 +44,17 @@ async function main (): Promise<void> {
         return
       }
 
-      const fileStream = fs.createWriteStream('cache.tar')
       await new Promise((resolve, reject) => {
-        body.pipe(fileStream)
+        body.pipe(tarProcess.stdin)
         body.on('error', reject)
-        fileStream.on('finish', resolve)
+        body.on('finish', resolve)
       })
 
-      const parentFolder = path.resolve(folder, '..')
-
-      await exec.exec(`mkdir -p ${parentFolder}`)
-      try {
-        await exec.exec(`tar -xf cache.tar -C ${parentFolder}`)
-      } catch (e) {
-        console.warn(e)
-        core.warning('Cache unpacking failed. Was the archive corrupted? Continuing without cache...')
-      }
+      await new Promise((resolve) => {
+        tarProcess.on('exit', (code) => {
+          resolve(code)
+        })
+      })
     } else {
       core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
       return
