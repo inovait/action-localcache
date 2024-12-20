@@ -16,7 +16,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: inovait/action-localcache/internal@93517353379c19f715706720d03fb69dde9f6103
+    - uses: inovait/action-localcache/internal@v3
       with:
         folder: '${{ inputs.folder }}'
         key: '${{ inputs.key }}'
