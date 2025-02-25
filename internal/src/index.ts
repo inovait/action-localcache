@@ -37,10 +37,12 @@ async function main (): Promise<void> {
 
     if (res.status === 404) {
       console.log(`Cache entry for key ${key} missing. Skipping...`)
+      tarProcess.kill()
     } else if (res.status === 200) {
       const body = res.body
       if (body == null) {
         core.setFailed('Failed to fetch data')
+        tarProcess.kill()
         return
       }
 
@@ -57,6 +59,7 @@ async function main (): Promise<void> {
       })
     } else {
       core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
+      tarProcess.kill()
       return
     }
   } catch (error: any) {
