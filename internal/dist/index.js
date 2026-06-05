@@ -69,7 +69,8 @@ function main() {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
-                highWaterMark: 1024 * 1024
+                highWaterMark: 1024 * 1024,
+                signal: AbortSignal.timeout(120000)
             });
             if (res.status === 404) {
                 console.log(`Cache entry for key ${key} missing. Skipping...`);

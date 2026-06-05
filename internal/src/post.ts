@@ -34,7 +34,8 @@ async function main (): Promise<void> {
       headers: {
         Authorization: authorization
       },
-      highWaterMark: 1024 * 1024
+      highWaterMark: 1024 * 1024,
+      signal: AbortSignal.timeout(120_000)
     })
 
     await new Promise((resolve) => {

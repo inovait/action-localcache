@@ -71,7 +71,8 @@ function main() {
                 headers: {
                     Authorization: authorization
                 },
-                highWaterMark: 1024 * 1024
+                highWaterMark: 1024 * 1024,
+                signal: AbortSignal.timeout(120000)
             });
             yield new Promise((resolve) => {
                 tarProcess.on('exit', (code) => {
