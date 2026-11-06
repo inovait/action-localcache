@@ -79,8 +79,11 @@ function main() {
                     resolve(code);
                 });
             });
+            console.log('X');
             const res = yield resPromise;
+            console.log('a', res.status);
             yield res.arrayBuffer();
+            console.log('b');
             if (res.status !== 200) {
                 core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`);
                 return;
