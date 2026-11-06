@@ -62,9 +62,11 @@ function main() {
             const token = core.getInput('token', { required: true });
             console.log(`Loading cache ${key} into ${folder}!`);
             const parentFolder = path_1.default.resolve(folder, '..');
+            console.log('00');
             yield exec.exec(`mkdir -p ${parentFolder}`);
             // We must use regular node spawn instead of actions.exec due to https://github.com/actions/toolkit/issues/649
             const tarProcess = (0, node_child_process_1.spawn)('tar', ['-xf', '-', '-C', parentFolder]);
+            console.log('aa');
             const res = yield (0, node_fetch_1.default)(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -72,6 +74,7 @@ function main() {
                 highWaterMark: 1024 * 1024,
                 signal: AbortSignal.timeout(120000)
             });
+            console.log('b', res.status);
             if (res.status === 404) {
                 console.log(`Cache entry for key ${key} missing. Skipping...`);
                 tarProcess.kill();

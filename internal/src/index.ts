@@ -23,11 +23,13 @@ async function main (): Promise<void> {
 
     const parentFolder = path.resolve(folder, '..')
 
+    console.log('00')
     await exec.exec(`mkdir -p ${parentFolder}`)
 
     // We must use regular node spawn instead of actions.exec due to https://github.com/actions/toolkit/issues/649
     const tarProcess = spawn('tar', ['-xf', '-', '-C', parentFolder])
 
+    console.log('aa')
     const res = await fetch(`http://build-docker-linux:25478/cache/${repo}/${key}`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -35,6 +37,7 @@ async function main (): Promise<void> {
       highWaterMark: 1024 * 1024,
       signal: AbortSignal.timeout(120_000)
     })
+    console.log('b', res.status)
 
     if (res.status === 404) {
       console.log(`Cache entry for key ${key} missing. Skipping...`)
