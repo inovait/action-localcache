@@ -82,14 +82,15 @@ function main() {
             const res = yield resPromise;
             yield res.arrayBuffer();
             if (res.status !== 200) {
-                core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`);
-                return;
+                core.setFailed(`Failed to save cache entry - ${res.status} ${res.statusText}`);
+                process.exit(1);
             }
             console.log(`Post cache ${key} into ${folder}!`);
         }
         catch (error) {
             console.log(error);
             core.setFailed(error);
+            process.exit(1);
         }
     });
 }

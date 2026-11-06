@@ -81,7 +81,7 @@ function main() {
                 if (body == null) {
                     core.setFailed('Failed to fetch data');
                     tarProcess.kill();
-                    return;
+                    process.exit(1);
                 }
                 yield new Promise((resolve, reject) => {
                     body.pipe(tarProcess.stdin);
@@ -97,12 +97,13 @@ function main() {
             else {
                 core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`);
                 tarProcess.kill();
-                return;
+                process.exit(1);
             }
         }
         catch (error) {
             console.log(error);
             core.setFailed(error.message);
+            process.exit(1);
         }
     });
 }

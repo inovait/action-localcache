@@ -44,7 +44,7 @@ async function main (): Promise<void> {
       if (body == null) {
         core.setFailed('Failed to fetch data')
         tarProcess.kill()
-        return
+        process.exit(1)
       }
 
       await new Promise((resolve, reject) => {
@@ -61,11 +61,12 @@ async function main (): Promise<void> {
     } else {
       core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
       tarProcess.kill()
-      return
+      process.exit(1)
     }
   } catch (error: any) {
     console.log(error)
     core.setFailed(error.message)
+    process.exit(1)
   }
 }
 
