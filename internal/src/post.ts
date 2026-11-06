@@ -44,8 +44,11 @@ async function main (): Promise<void> {
       })
     })
 
+    console.log('X')
     const res = await resPromise
+    console.log('a', res.status)
     await res.arrayBuffer()
+    console.log('b')
 
     if (res.status !== 200) {
       core.setFailed(`Failed to load cache entry - ${res.status} ${res.statusText}`)
