@@ -67,7 +67,7 @@ async function main (): Promise<void> {
       return
     }
   } catch (error: any) {
-    console.log('Inside catch')
+    console.log('Inside catch', error.type)
     console.log(error)
     core.setFailed(error.message)
     process.exit(1)
