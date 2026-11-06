@@ -104,8 +104,10 @@ function main() {
             }
         }
         catch (error) {
+            console.log('Inside catch');
             console.log(error);
             core.setFailed(error.message);
+            process.exit(1);
         }
     });
 }
