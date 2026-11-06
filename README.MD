@@ -6,7 +6,7 @@ local Inova server, making it much faster to execute on Inova's hosted builds.
 # Use
 
 ```yaml
-- uses: inovait/action-localcache@2acbc63846bc40d87f2cf92bf0e2e3c8b7cbc0b3 #v6
+- uses: inovait/action-localcache@d7241cddc3f9e295a2ce34ea442c97e475cdf27a #v7
   with:
     folder: /root/.android
     key: ${{ runner.os }}-androidSDK
